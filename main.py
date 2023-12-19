@@ -106,12 +106,59 @@ food.color('green')
 def spawn_food():
   global lives
   if food.isvisible():
-    if disForm(food, player) <= 25:
+    if distForm(food, player) <= 25:
       food.hideturtle()
       lives += 1
       print('EXTRA LIFE! -- Now you have', lives)
-    screen.ontime(spawn_food, 10)
+    screen.ontimer(spawn_food, 10)
   else:
     food.setpos(rnum(-450, 450), rnum(-200, 200))
     food.showturtle()
-    screen.ontimer(spawn_food, rnum(10 * diff, 1000 * diff)
+    screen.ontimer(spawn_food, rnum(10 * diff, 1000 * diff))
+
+
+#Enemies
+enemies = []
+lives = 3
+
+for i in range(diff * 10):
+  enemies.append(turtle.Turtle())
+  enemies[-1].hideturtle()
+  enemies[-1].penup()
+  enemies[-1].shape('turtle')
+  enemies[-1].color('red')
+  enemies[-1].speed(0 if diff == 10 else int(diff + 1))
+  enemies[-1].setpos(rnum(-450, 450), rnum(-200, 200))
+
+for et in enemies:
+  et.showturtle()
+
+
+def moveEnemies():
+  global enemies
+  global lives
+  global player_is_hurt
+
+  for e in enemies:
+    e.fd(rnum(2 * diff, 5 * diff))
+    check_borders(e)
+
+    if distForm(e, player) <= 50 and e.isvisible() and player_is_hurt <= 0:
+      player_is_hurt = int(11 - diff)
+      lives -= 1
+
+      if lives <= 0:
+        print('You lose -- you lasted:', gameTime, 'second(s')
+        screen.bye()
+
+      else:
+        print('You got hit!!! You have', lives, 'lives left!')
+
+      e.hideturtle()
+      e.setpos(rnum(-450, 450), rnum(-200, 200))
+      e.showturtle()
+
+    if rnum(1, 100) > 80: e.rt(180)
+    else: e.rt(rnum(-25, 25))
+
+  screen.ontimer(moveEnemies, 10)

@@ -1,4 +1,4 @@
-import math, random, turtle
+import os, sys, math, random, time, turtle
 
 
 #Base Utility Functions
@@ -68,3 +68,50 @@ screen.onkeypress(turn_right, 'd')
 #Last 2 Lines ------
 screen.listen()
 screen.mainloop()
+
+#Game Time
+gameTime = 0
+player_is_hurt = int(15 - diff)
+lives = 3
+
+
+def trackGameTime():
+
+  global gameTime
+  global player_is_hurt
+
+  gameTime += 1
+  player_is_hurt -= 1
+
+  print('Time Alive:', gameTime, 'second(s) - Shield?:', player_is_hurt > 0)
+  screen.ontimer(trackGameTime, 1000)
+
+
+# Shield Visual Rep.
+def toggleShield():
+  if player_is_hurt > 0: player.fillcolor('blue')
+  else: player.fillcolor('black')
+
+  screen.ontimer(toggleShield, 5)
+
+
+#food
+food = turtle.Turtle()
+food.penup()
+food.hideturtle()
+food.shape('square')
+food.color('green')
+
+
+def spawn_food():
+  global lives
+  if food.isvisible():
+    if disForm(food, player) <= 25:
+      food.hideturtle()
+      lives += 1
+      print('EXTRA LIFE! -- Now you have', lives)
+    screen.ontime(spawn_food, 10)
+  else:
+    food.setpos(rnum(-450, 450), rnum(-200, 200))
+    food.showturtle()
+    screen.ontimer(spawn_food, rnum(10 * diff, 1000 * diff)
